@@ -414,7 +414,103 @@ beforeRouteEnter(to, from, next) {
 + 路由导航前
 
   ```
-  // 组件未渲染，通过给next传递回调访问组件实例 beforeRouteEnter (to, from, next) { getPost(to.params.id, post => { next(vm => vm.setData(post)) }) },// 组件已渲染，可以访问this直接赋值 beforeRouteUpdate (to, from, next) { this.post = null getPost(to.params.id, post => { this.setData(post) next() }) },
+  // 组件未渲染，通过给next传递回调访问组件实例 
+  beforeRouteEnter (to, from, next) { 
+    getPost(to.params.id, post => { 
+    	next(vm => vm.setData(post)) 
+    }) 
+  },
+  // 组件已渲染，可以访问this直接赋值 
+  beforeRouteUpdate (to, from, next) {
+    this.post = null 
+    getPost(to.params.id, post => { 
+    	this.setData(post) next() 
+    }) 
+  },
   ```
 
-  
+
+
++ 路由导航后
+
+  ```
+  created () { 
+  	this.fetchData() 
+  },
+  watch: { 
+  	'$route': 'fetchData'
+  }
+  ```
+
+
+
+### 动态路由
+
+通过router.addRoutes(routes)方式动态添加路由
+
+```
+// 全局守卫修改为：要求用户必须登录，否则只能去登录页 
+router.beforeEach((to, from, next) => { 
+  if (window.isLogin) {
+    if (to.path === '/login') {
+      next('/') 
+    } else {
+      next()
+    } 
+  } else { 
+    if (to.path === '/login') { 
+      next() 
+    } else { 
+      next('/login?redirect=' + to.fullPath) 
+    }
+ 	}
+})
+```
+
+```
+// Login.vue用户登录成功后动态添加/about 
+login() { 
+  window.isLogin = true; 
+  this.$router.addRoutes([ 
+    { 
+    path: "/about", //... 
+    } 
+  ]);
+  const redirect = this.$route.query.redirect || "/"; 
+  this.$router.push(redirect); 
+}
+```
+
+### 路由组件缓存
+
+利用keepalive做组件缓存，保留组件状态，提高执行效率
+
+范例：缓存about组件
+
+```
+<keep-alive include="about"> 
+	<router-view></router-view> 
+</keep-alive>
+```
+
+> 使用include或exclude时要给组件设置name
+
+> 两个特别的生命周期：activated、deactivated
+
+### 路由懒加载
+
+路由组件的懒加载能把不同路由对应的组件分割成不同的代码块，然后当路由被访问的时候才加载对应
+
+组件，这样就更加高效了。
+
+
+
+```
+() => import("../views/About.vue")
+```
+
+> 把组件按组分块
+>
+> ```
+> () => import(/* webpackChunkName: "group-about" */ "../views/About.vue")
+> ```
