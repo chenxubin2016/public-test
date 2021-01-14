@@ -5,13 +5,12 @@ const path = require("path"),
   CompressionWebpackPlugin = require("compression-webpack-plugin"),
   productionGzipExtensions = /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i;
 module.exports = {
-  publicPath: "./",
+  publicPath: IS_PROD ? '/' : process.env.BASE_URL,
   outputDir: "dist",
   assetsDir: "static",
   indexPath: "index.html",
   filenameHashing: true,
   productionSourceMap: false,
-
   css: {
     sourceMap: true,
     loaderOptions: {
