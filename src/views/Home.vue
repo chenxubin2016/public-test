@@ -1,7 +1,10 @@
 <template>
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png" />
+    <!-- 列表 -->
     <course-list routerName='HomeListDetail' :courses="courses"></course-list>
+    <!-- 路由出口 -->
+    <!-- Home页面的子路由匹配到的组件将渲染在这里 -->
     <router-view></router-view>
   </div>
 </template>
