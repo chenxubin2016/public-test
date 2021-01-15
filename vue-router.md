@@ -958,5 +958,72 @@ vue router 源码目录结构
 
 
 
+## 关键代码
+
+
+
+```js
+Vue.use(VueRouter)
+执行install // 挂载vue-router并初始化
+```
+
+
+
+```js
+//实例化
+const router = new VueRouter()
+
+//实例挂载
+const app=new Vue({
+  // 将路由实例注入到vue根实例中
+  // 我们可以在任何组件内通过 this.$router 访问路由器，也可以通过 this.$route 访问当前路由
+  router,
+  store,
+  render: h => h(App)
+}).$mount('#app')
+
+//执行vue的mixin
+
+ // 把vue实例挂在到vue实例的_routerRoot上
+  this._routerRoot = this;
+  // 把VueRouter实例挂载到_router上
+  this._router = this.$options.router;
+  // 初始化vue-router，init为核心方法，init定义在src/index.js中
+  this._router.init(this);
+
+// 创建 matcher 匹配函数，createMatcher函数返回 {match, addRoutes}
+this.matcher = createMatcher(options.routes || [], this)
+
+// 不同的mode，实例化不同的History类, 后面的this.history就是History的实例
+// 不同的mode，实例化不同的History类, 后面的this.history就是History的实例
+switch (mode) {
+  case 'history':
+    this.history = new HTML5History(this, options.base)
+    break
+  case 'hash':
+    this.history = new HashHistory(this, options.base, this.fallback)
+    break
+  case 'abstract':
+    this.history = new AbstractHistory(this, options.base)
+    break
+  default:
+    if (process.env.NODE_ENV !== 'production') {
+      assert(false, `invalid mode: ${mode}`)
+    }
+}
+
+//视图更新
+transitionTo (
+  location: RawLocation,
+  onComplete?: Function,
+  onAbort?: Function
+)
+
+```
+
+
+
+
+
 
 
