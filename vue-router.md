@@ -933,7 +933,9 @@ login() {
 
 
 
-vue router 源码目录结构
+## vue router 源码目录结构
+
+
 
 ```
 
@@ -955,6 +957,40 @@ vue router 源码目录结构
 ├── test                    //测试文件
 └── types                   // TypeScript 声明
 ```
+
+
+
+## 源码如何阅读
+
+
+
+
+
+### 不同的构建版本对比
+
+|       版本        |        UMD        |       CommonJS       | ES Module (基于构建工具使用) |  ES Module (直接用于浏览器)   |
+| :---------------: | :---------------: | :------------------: | :--------------------------: | :---------------------------: |
+|      完整版       |   vue-router.js   | vue-router.common.js |      vue-router.esm.js       |   vue-router.esm.browser.js   |
+| 完整版 (生产环境) | vue-router.min.js |          -           |              -               | vue-router.esm.browser.min.js |
+
+### 查看vue-router源码 方法
+
++ 下载好 `vue-router` 源码，安装好依赖。(npm install)
+
++ 找到 `build/config.js` 修改 `module.exports`，只保留 `es`，其它的注释。
+
+  ```js
+  // 保留版本
+  module.exports = [
+      {
+          file: resolve('dist/vue-router.esm.js'),
+          format: 'es'
+      }
+  ].map(genConfig)
+  ```
+
++ 执行 `npm run dev`命令，将 `vue-router` 跑起来
++ 在examples/basic/app.js打断点查看
 
 
 
@@ -990,6 +1026,7 @@ const app=new Vue({
   this._router = this.$options.router;
   // 初始化vue-router，init为核心方法，init定义在src/index.js中
   this._router.init(this);
+
 
 // 创建 matcher 匹配函数，createMatcher函数返回 {match, addRoutes}
 this.matcher = createMatcher(options.routes || [], this)
